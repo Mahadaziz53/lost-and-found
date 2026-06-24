@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Report Lost Item - AI FindIt{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full animate-fade-in">
+    
+    <div class="mb-8">
+        <a href="{{ url_for('index') }}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-brand-600 transition mb-4">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Back to Dashboard
+        </a>
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-900/30 text-red-500 flex items-center justify-center text-xl shadow-inner">
+                <i class="fa-solid fa-search"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-display font-bold text-gray-900 dark:text-white tracking-tight">Report Lost Item</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Provide details so our AI can help you find it.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-dark-800 rounded-2xl shadow-xl border border-gray-200 dark:border-dark-border p-6 sm:p-8 relative overflow-hidden">
+        <!-- Decoration -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-500/5 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
+
+        <form method="POST" action="{{ url_for('report_lost') }}" enctype="multipart/form-data" class="space-y-6 relative z-10">
+            
+            <div class="space-y-1">
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300" for="title">Item Title</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-tag text-gray-400"></i>
+                    </div>
+                    <input type="text" name="title" id="title" required placeholder="e.g. Black Leather Wallet"
+                        class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-dark-border text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none shadow-sm block">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-1">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300" for="location">Location Lost</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-location-dot text-gray-400"></i>
+                        </div>
+                        <input type="text" name="location" id="location" required placeholder="e.g. Central Library"
+                            class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-dark-border text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none shadow-sm block">
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300" for="contact">Contact Information</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-phone text-gray-400"></i>
+                        </div>
+                        <input type="text" name="contact" id="contact" placeholder="Phone or email (optional)"
+                            class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-dark-border text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none shadow-sm block">
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300" for="description">Description</label>
+                <textarea name="description" id="description" rows="4" required placeholder="Describe any unique features, brands, or contents..."
+                    class="w-full p-4 bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-dark-border text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none shadow-sm block resize-none"></textarea>
+            </div>
+
+            <div class="space-y-1">
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Upload Image</label>
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-dark-border border-dashed rounded-xl bg-gray-50 dark:bg-dark-900 hover:bg-gray-100 dark:hover:bg-dark-800 transition cursor-pointer relative" onclick="document.getElementById('image').click()">
+                    <div class="space-y-1 text-center">
+                        <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
+                        <div class="flex text-sm text-gray-600 dark:text-gray-400 justify-center">
+                            <label for="image" class="relative cursor-pointer bg-transparent rounded-md font-medium text-brand-600 hover:text-brand-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-brand-500">
+                                <span>Upload a file</span>
+                                <input id="image" name="image" type="file" accept="image/*" class="sr-only" onchange="document.getElementById('fileName').textContent = this.files[0]?.name || 'No file chosen'">
+                            </label>
+                            <p class="pl-1">or drag and drop</p>
+                        </div>
+                        <p class="text-xs text-gray-500" id="fileName">PNG, JPG, GIF up to 10MB</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 flex justify-end gap-3 border-t border-gray-100 dark:border-dark-border">
+                <a href="{{ url_for('index') }}" class="px-5 py-2.5 text-sm font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-dark-800 border border-gray-300 dark:border-dark-border rounded-xl shadow-sm hover:bg-gray-50 dark:hover:bg-dark-900 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500">
+                    Cancel
+                </a>
+                <button type="submit" class="px-6 py-2.5 text-sm font-bold text-white bg-brand-600 border border-transparent rounded-xl shadow-lg shadow-brand-500/30 hover:bg-brand-700 transition transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 flex items-center gap-2">
+                    Submit Report <i class="fa-solid fa-paper-plane text-xs"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

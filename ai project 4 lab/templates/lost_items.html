@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}All Lost Items - AI FindIt{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full animate-fade-in">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-6 border-b border-gray-100 dark:border-dark-border">
+        <div>
+            <h1 class="text-3xl font-display font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-900/30 text-red-500 flex items-center justify-center text-lg shadow-inner">
+                    <i class="fa-solid fa-search"></i>
+                </span>
+                Lost Items Registry
+            </h1>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400 max-w-2xl">Browse the global database of items people are currently looking for. Our AI automatically attempts to match these with found entries.</p>
+        </div>
+        <div class="mt-4 md:mt-0">
+            <a href="{{ url_for('report_lost') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white rounded-xl font-bold text-sm hover:bg-brand-700 shadow-lg shadow-brand-500/30 transition transform hover:-translate-y-0.5">
+                <i class="fa-solid fa-plus text-xs"></i> Report Lost Item
+            </a>
+        </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-slide-up" style="animation-delay: 0.1s;">
+        {% for item in items %}
+        <div class="glass bg-white dark:bg-dark-800 border border-gray-100 dark:border-dark-border rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-brand-300 dark:hover:border-brand-700 transition duration-300 group flex flex-col h-full">
+            <!-- Image Area -->
+            <div class="h-48 bg-gray-100 dark:bg-dark-900 relative overflow-hidden flex-shrink-0">
+                {% if item.image_path %}
+                <img src="{{ url_for('static', filename=item.image_path) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                {% else %}
+                <div class="w-full h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-600 space-y-2">
+                    <i class="fa-solid fa-image text-4xl opacity-50"></i>
+                    <span class="text-xs font-semibold uppercase tracking-wider">No Image</span>
+                </div>
+                {% endif %}
+                <div class="absolute top-3 right-3 bg-white/90 dark:bg-dark-900/90 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-bold text-red-500 shadow-sm border border-white/20">
+                    Lost
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="p-5 flex flex-col flex-grow">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white truncate group-hover:text-brand-600 dark:group-hover:text-brand-400 transition">{{ item.title }}</h3>
+                
+                <div class="mt-3 space-y-2 mb-4 flex-grow">
+                    <div class="flex items-center text-sm text-gray-600 dark:text-gray-400 truncate">
+                        <i class="fa-solid fa-location-dot w-5 text-center text-red-400 dark:text-red-500/70"></i>
+                        <span class="truncate">{{ item.location }}</span>
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600 dark:text-gray-400 truncate">
+                        <i class="fa-regular fa-clock w-5 text-center text-gray-400"></i>
+                        <span class="truncate">{{ item.timestamp.split(' ')[0] if item.timestamp else 'Recently' }}</span>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-gray-50 dark:border-dark-border mt-auto">
+                    <a href="{{ url_for('view_matches', item_type='lost', item_id=item.id) }}" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-brand-50 hover:bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:hover:bg-brand-900/50 dark:text-brand-300 rounded-xl font-bold text-sm transition">
+                        <i class="fa-solid fa-microchip"></i> AI Match Search
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-span-full py-16 flex flex-col items-center justify-center text-center bg-gray-50 dark:bg-dark-800/50 rounded-3xl border border-dashed border-gray-200 dark:border-dark-border">
+            <div class="w-20 h-20 bg-white dark:bg-dark-900 rounded-full flex items-center justify-center text-gray-300 dark:text-gray-600 mb-4 shadow-sm border border-gray-100 dark:border-dark-border">
+                <i class="fa-solid fa-folder-open text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">No Lost Items Documented</h3>
+            <p class="text-gray-500 dark:text-gray-400 max-w-sm">The registry is currently empty. If you've lost something, be the first to report it.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

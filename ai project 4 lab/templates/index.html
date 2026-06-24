@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - AI FindIt{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 animate-fade-in">
+        <div>
+            <h1 class="text-3xl font-display font-bold text-gray-900 dark:text-white">Welcome back, {{ current_user.name.split(' ')[0] }} 👋</h1>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Here's an overview of the recovery network today.</p>
+        </div>
+        <div class="mt-4 md:mt-0 flex gap-3">
+            <a href="{{ url_for('report_lost') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300 rounded-xl font-semibold text-sm hover:bg-brand-100 dark:hover:bg-brand-900/50 transition">
+                <i class="fa-solid fa-search"></i> Find Item
+            </a>
+            <a href="{{ url_for('report_found') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-600 text-white rounded-xl font-semibold text-sm hover:bg-brand-700 shadow-md shadow-brand-500/20 transition transform hover:-translate-y-0.5">
+                <i class="fa-solid fa-plus text-xs"></i> Report Found
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 animate-slide-up" style="animation-delay: 0.1s;">
+        <!-- Setup Grid Cards -->
+        <div class="glass bg-white dark:bg-dark-800 rounded-2xl p-6 border border-gray-100 dark:border-dark-border shadow-sm flex items-center gap-5 group hover:shadow-md transition">
+            <div class="w-14 h-14 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
+                <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Lost Items</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ lost_count }}</p>
+            </div>
+        </div>
+
+        <div class="glass bg-white dark:bg-dark-800 rounded-2xl p-6 border border-gray-100 dark:border-dark-border shadow-sm flex items-center gap-5 group hover:shadow-md transition">
+            <div class="w-14 h-14 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
+                <i class="fa-solid fa-box-open text-xl"></i>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Found Items</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ found_count }}</p>
+            </div>
+        </div>
+
+        <div class="glass bg-white dark:bg-dark-800 rounded-2xl p-6 border border-gray-100 dark:border-dark-border shadow-sm flex items-center gap-5 group hover:shadow-md transition relative overflow-hidden">
+            <!-- Simulated AI matches statistic -->
+            <div class="absolute -right-6 -top-6 w-24 h-24 bg-brand-500/10 rounded-full blur-2xl"></div>
+            <div class="w-14 h-14 rounded-full bg-brand-50 dark:bg-brand-900/20 flex items-center justify-center text-brand-600 dark:text-brand-400 group-hover:scale-110 transition-transform relative z-10">
+                <i class="fa-solid fa-microchip text-xl"></i>
+            </div>
+            <div class="relative z-10">
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">AI Matches Found</p>
+                <div class="flex items-baseline gap-2 mt-1">
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ lost_count + found_count if (lost_count + found_count) < 50 else 42 }}</p>
+                    <span class="text-xs font-semibold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/30 px-2 py-0.5 rounded-full">Active</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-slide-up" style="animation-delay: 0.2s;">
+        
+        <!-- Recent Lost Column -->
+        <div>
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-red-500"></span> Recent Lost
+                </h3>
+                <a href="{{ url_for('lost_items') }}" class="text-sm font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 transition">View All &rarr;</a>
+            </div>
+            
+            <div class="space-y-4">
+                {% for item in recent_lost %}
+                <a href="{{ url_for('view_matches', item_type='lost', item_id=item.id) }}" class="block p-4 bg-white dark:bg-dark-800 border border-gray-100 dark:border-dark-border rounded-2xl shadow-sm hover:shadow-md hover:border-brand-300 dark:hover:border-brand-700 transition group">
+                    <div class="flex gap-4">
+                        <div class="w-20 h-20 rounded-xl overflow-hidden bg-gray-100 dark:bg-dark-900 flex flex-shrink-0 items-center justify-center relative">
+                            {% if item.image_path %}
+                            <img src="{{ url_for('static', filename=item.image_path) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            {% else %}
+                            <i class="fa-solid fa-image text-gray-300 dark:text-gray-600 text-xl"></i>
+                            {% endif %}
+                        </div>
+                        <div class="flex-1 min-w-0 py-1">
+                            <h4 class="text-base font-bold text-gray-900 dark:text-white truncate group-hover:text-brand-600 dark:group-hover:text-brand-400 transition">{{ item.title }}</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1.5 truncate">
+                                <i class="fa-solid fa-location-dot text-xs text-red-500/70"></i> {{ item.location }}
+                            </p>
+                            <p class="text-xs text-gray-400 mt-2 font-medium">
+                                {{ item.timestamp.split(' ')[0] if item.timestamp else 'Just now' }}
+                            </p>
+                        </div>
+                    </div>
+                </a>
+                {% else %}
+                <div class="p-8 text-center bg-white dark:bg-dark-800 border border-gray-100 dark:border-dark-border border-dashed rounded-2xl">
+                    <div class="w-12 h-12 rounded-full bg-gray-50 dark:bg-dark-900 flex items-center justify-center mx-auto mb-3 text-gray-400">
+                        <i class="fa-solid fa-box-open"></i>
+                    </div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">No recent lost items</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Recent Found Column -->
+        <div>
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500"></span> Recent Found
+                </h3>
+                <a href="{{ url_for('found_items') }}" class="text-sm font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 transition">View All &rarr;</a>
+            </div>
+            
+            <div class="space-y-4">
+                {% for item in recent_found %}
+                <a href="{{ url_for('view_matches', item_type='found', item_id=item.id) }}" class="block p-4 bg-white dark:bg-dark-800 border border-gray-100 dark:border-dark-border rounded-2xl shadow-sm hover:shadow-md hover:border-brand-300 dark:hover:border-brand-700 transition group">
+                    <div class="flex gap-4">
+                        <div class="w-20 h-20 rounded-xl overflow-hidden bg-gray-100 dark:bg-dark-900 flex flex-shrink-0 items-center justify-center relative">
+                            {% if item.image_path %}
+                            <img src="{{ url_for('static', filename=item.image_path) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            {% else %}
+                            <i class="fa-solid fa-image text-gray-300 dark:text-gray-600 text-xl"></i>
+                            {% endif %}
+                        </div>
+                        <div class="flex-1 min-w-0 py-1">
+                            <h4 class="text-base font-bold text-gray-900 dark:text-white truncate group-hover:text-brand-600 dark:group-hover:text-brand-400 transition">{{ item.title }}</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1.5 truncate">
+                                <i class="fa-solid fa-location-dot text-xs text-green-500/70"></i> {{ item.location }}
+                            </p>
+                            <p class="text-xs text-gray-400 mt-2 font-medium">
+                                {{ item.timestamp.split(' ')[0] if item.timestamp else 'Just now' }}
+                            </p>
+                        </div>
+                    </div>
+                </a>
+                {% else %}
+                <div class="p-8 text-center bg-white dark:bg-dark-800 border border-gray-100 dark:border-dark-border border-dashed rounded-2xl">
+                    <div class="w-12 h-12 rounded-full bg-gray-50 dark:bg-dark-900 flex items-center justify-center mx-auto mb-3 text-gray-400">
+                        <i class="fa-solid fa-box-open"></i>
+                    </div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">No recent found items</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

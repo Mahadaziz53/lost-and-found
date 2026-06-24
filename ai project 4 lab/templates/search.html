@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Search Application - AI FindIt{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full animate-fade-in">
+    <!-- Search Header -->
+    <div class="w-full max-w-3xl mx-auto text-center mb-12">
+        <h2 class="text-3xl font-display font-bold text-gray-900 dark:text-white mb-6">Search the Global Network</h2>
+        <form action="{{ url_for('search') }}" method="GET" class="relative group">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <i class="fa-solid fa-magnifying-glass text-gray-400 group-focus-within:text-brand-500 transition-colors"></i>
+            </div>
+            <input type="text" name="q" value="{{ query }}" placeholder="Keywords, locations, descriptions..." 
+                class="block w-full pl-12 pr-32 py-4 bg-white dark:bg-dark-800 border-2 border-transparent shadow-lg rounded-2xl text-base text-gray-900 dark:text-white focus:outline-none focus:ring-0 focus:border-brand-500 transition-all dark:shadow-none dark:border-dark-border dark:focus:border-brand-500">
+            <div class="absolute inset-y-2 right-2">
+                <button type="submit" class="h-full px-6 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md transition transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500">
+                    Search
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if query %}
+    <div class="w-full max-w-5xl mx-auto animate-slide-up" style="animation-delay: 0.1s;">
+        <div class="mb-8 border-b border-gray-200 dark:border-dark-border pb-4">
+            <h4 class="text-xl font-bold text-gray-900 dark:text-white">
+                Results for <span class="text-brand-600 dark:text-brand-400">"{{ query }}"</span>
+            </h4>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Lost Items Results -->
+            <div>
+                <h5 class="flex items-center gap-2 text-lg font-bold text-red-600 dark:text-red-400 mb-4 px-1">
+                    <i class="fa-solid fa-search"></i> Found in Lost Items
+                </h5>
+                <div class="space-y-3">
+                    {% if results_lost %}
+                        {% for item in results_lost %}
+                        <a href="{{ url_for('view_matches', item_type='lost', item_id=item.id) }}" class="block p-4 bg-white dark:bg-dark-800 border border-gray-100 dark:border-dark-border rounded-xl shadow-sm hover:shadow-md hover:border-red-300 dark:hover:border-red-700 transition group">
+                            <h6 class="text-base font-bold text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition">{{ item.title }}</h6>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1.5 break-words">
+                                <i class="fa-solid fa-location-dot text-xs text-red-400"></i> {{ item.location }}
+                            </p>
+                        </a>
+                        {% endfor %}
+                    {% else %}
+                        <div class="p-6 text-center bg-gray-50 dark:bg-dark-900/50 rounded-xl border border-dashed border-gray-200 dark:border-dark-border mb-4">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">No lost items match this query.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Found Items Results -->
+            <div>
+                <h5 class="flex items-center gap-2 text-lg font-bold text-green-600 dark:text-green-400 mb-4 px-1">
+                    <i class="fa-solid fa-box-open"></i> Found in Found Items
+                </h5>
+                <div class="space-y-3">
+                    {% if results_found %}
+                        {% for item in results_found %}
+                        <a href="{{ url_for('view_matches', item_type='found', item_id=item.id) }}" class="block p-4 bg-white dark:bg-dark-800 border border-gray-100 dark:border-dark-border rounded-xl shadow-sm hover:shadow-md hover:border-green-300 dark:hover:border-green-700 transition group">
+                            <h6 class="text-base font-bold text-gray-900 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400 transition">{{ item.title }}</h6>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1.5 break-words">
+                                <i class="fa-solid fa-location-dot text-xs text-green-400"></i> {{ item.location }}
+                            </p>
+                        </a>
+                        {% endfor %}
+                    {% else %}
+                        <div class="p-6 text-center bg-gray-50 dark:bg-dark-900/50 rounded-xl border border-dashed border-gray-200 dark:border-dark-border mb-4">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">No found items match this query.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% set hide_navbar = true %}
+{% block title %}Sign Up - AI FindIt{% endblock %}
+
+{% block content %}
+<div class="min-h-screen w-full flex items-center justify-center px-4 relative overflow-hidden bg-gray-50 dark:bg-dark-900 py-10">
+    <!-- Abstract Background Shapes -->
+    <div class="absolute top-0 left-0 -ml-20 -mt-20 w-96 h-96 rounded-full bg-brand-400/20 blur-3xl mix-blend-multiply dark:mix-blend-screen pointer-events-none"></div>
+    <div class="absolute bottom-0 right-0 -mr-20 -mb-20 w-80 h-80 rounded-full bg-indigo-500/20 blur-3xl mix-blend-multiply dark:mix-blend-screen pointer-events-none"></div>
+
+    <!-- Theme Toggle Floating -->
+    <button @click="toggleTheme()" class="absolute top-6 right-6 z-50 bg-white/50 dark:bg-dark-800/50 backdrop-blur-md w-10 h-10 rounded-full border border-gray-200 dark:border-dark-border flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 shadow-sm transition">
+        <i class="fa-solid" :class="isDark ? 'fa-sun' : 'fa-moon'"></i>
+    </button>
+
+    <div class="w-full max-w-md animate-fade-in relative z-10">
+        <div class="bg-white dark:bg-dark-800 border border-gray-200 dark:border-dark-border rounded-2xl shadow-2xl p-8 sm:p-10">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <a href="{{ url_for('index') }}" class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-brand-50 dark:bg-brand-900/30 text-brand-600 mb-6 group transition">
+                    <i class="fa-solid fa-user-plus text-2xl group-hover:scale-110 transition-transform"></i>
+                </a>
+                <h2 class="text-2xl sm:text-3xl font-display font-bold text-gray-900 dark:text-white tracking-tight mb-2">Create Account</h2>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Join the AI-powered recovery network</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('register') }}" class="space-y-4">
+                
+                <!-- Name Input -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5" for="name">Full Name</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <i class="fa-regular fa-user text-gray-400"></i>
+                        </div>
+                        <input type="text" name="name" id="name" required placeholder="John Doe" value="{{ name if name != none else '' }}"
+                            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-dark-border text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none shadow-sm block">
+                    </div>
+                </div>
+
+                <!-- Email Input -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5" for="email">Email Address (@gmail.com)</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <i class="fa-regular fa-envelope text-gray-400"></i>
+                        </div>
+                        <input type="email" name="email" id="email" required placeholder="name@gmail.com" value="{{ email if email != none else '' }}"
+                            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-dark-border text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none shadow-sm block">
+                    </div>
+                </div>
+
+                <!-- Password Input -->
+                <div x-data="{ show: false }">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5" for="password">Password (Min 8 chars, 1 number)</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-lock text-gray-400"></i>
+                        </div>
+                        <input :type="show ? 'text' : 'password'" name="password" id="password" required placeholder="Create a strong password"
+                            class="w-full pl-10 pr-10 py-2.5 bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-dark-border text-gray-900 dark:text-white rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none shadow-sm block">
+                        <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none">
+                            <i class="fa-regular" :class="show ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="w-full flex justify-center items-center gap-2 py-3 px-4 border border-transparent rounded-xl shadow-lg shadow-brand-500/20 text-sm font-bold text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition transform hover:-translate-y-0.5 mt-6">
+                    Create Account <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <!-- Footer -->
+            <div class="mt-6 text-center border-t border-gray-100 dark:border-dark-border pt-6">
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                    Already have an account? 
+                    <a href="{{ url_for('login') }}" class="font-bold text-brand-600 dark:text-brand-400 hover:text-brand-500 hover:underline transition">Log in</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
